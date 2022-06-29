@@ -98,7 +98,7 @@ class MyLib
         $alpha = " -!ABCDEFGHIJKLMNOPQRSTUVWXYZ?";
         $ROW = "\n";
         $tmp = str_split(trim($T));
-        $handle = @fopen(__DIR__ . "/../../ascii.txt", "r");
+        $handle = @fopen(__DIR__ . "/ascii.txt", "r");
         if ($handle) {
             while ($buffer = stream_get_line($handle, 256 + 1, "\n")) {
                 foreach ($tmp as $c) {
