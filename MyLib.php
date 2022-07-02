@@ -95,7 +95,8 @@ class MyLib
     public static function loopTxt2ASCII(string $T = "HelloWorld", int $L = 4, int $H = 5) : ?string
     {
         $tmp = [];
-        $alpha = " -!ABCDEFGHIJKLMNOPQRSTUVWXYZ?";
+        
+        $alpha = " -_!.ABCDEFGHIJKLMNOPQRSTUVWXYZ?";
         $ROW = "\n";
         $tmp = str_split(trim($T));
         $handle = @fopen(__DIR__ . "/ascii.txt", "r");
@@ -104,7 +105,7 @@ class MyLib
                 foreach ($tmp as $c) {
                     $position = mb_stripos($alpha, $c);
                     if ($position === false) {
-                        $position = 28;
+                        $position = 32;
                     }
                     $ROW .= mb_substr($buffer, ($position * $L), $L);
                 }
