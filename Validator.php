@@ -24,6 +24,20 @@ class Validator
                 }
         }
 
+        public function checkCity(string $city): string
+        {
+                $city   = ucwords(trim($city));
+                $len    = strlen($city);
+                
+                if (empty($city) || !ctype_alpha($city)) {
+                        return 'Paris';
+                }
+                else if ($len <= 3 || $len >= 20) {
+                        return 'Paris';
+                }
+                return $city;
+        }
+
         public function validateUsername(?string $username): string
         {
                 if (empty($username)) {

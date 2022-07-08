@@ -6,16 +6,13 @@ namespace App\Lib;
 
 setlocale(LC_ALL, "fr_FR");
 date_default_timezone_set('Europe/Paris');
-define("KEY_OPENWEATHERMAP", "c3413a33b8d69c8f9600b3a50085a316");
-
 
 class Meteo
 {
         private $tabApi       = [];
 
-        public function __construct(\DateTime $usrDate, string $city)
+        public function __construct(\DateTime $usrDate, string $city, string $keyMeteo)
         {
-                $keyMeteo = KEY_OPENWEATHERMAP;
 
                 $url = "http://api.openweathermap.org/data/2.5/weather?q=" . $city . "&lang=fr&units=metric&appid=" . $keyMeteo;
                 $contents = file_get_contents($url);

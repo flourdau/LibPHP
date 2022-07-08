@@ -57,13 +57,13 @@ class Calendar
                                                                                         "Saint"		=>	$calendar->Saints[$cntDaySaint],
                                                                                         "dayMonth"      =>      $day,
                                                                                         "dayYear"    	=>	$usrDate->format("z"),
-                                                                                        "nameFr"        =>      ucwords(strftime("%A")),
+                                                                                        "nameFr"        =>      ucwords(strftime("%A",$usrDate->getTimestamp())),
                                                                                         "Name"  	=>	$usrDate->format("l")
                                                                                 ],
                                                 "Month"                 =>      [
 
                                                                                         "monthYear"     =>      $month,
-                                                                                        "nameFr"        =>      ucwords(strftime("%B")),
+                                                                                        "nameFr"        =>      ucwords(strftime("%B", $usrDate->getTimestamp())),
                                                                                         "Name"          =>      $usrDate->format("F")
                                                                                 ],
                                                 "Year"                  =>      $usrDate->format('Y'),
@@ -73,9 +73,9 @@ class Calendar
                                                 "Fuseau Horaire"	=>	$usrDate->format("e"),
                                                 "Dicton"        	=>	$calendar->Dictons[$usrDate->format("n") - 1]
                                         ]);
-                if ($usrDate->getTimestamp() > 0) {
-                        array_push($tabCalendar, ["Pâques" => date("d-m-Y", easter_date($usrDate->format("Y")))]);
-                }
+                // if ($usrDate->getTimestamp() > 0) {
+                //         array_push($tabCalendar, ["Pâques" => date("d-m-Y", easter_date($usrDate->format("Y")))]);
+                // }
                 $this->myTabCalendar = $tabCalendar;
         }
 
