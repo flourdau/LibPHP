@@ -11,19 +11,24 @@ class Meteo
 {
         private $tabApi       = [];
 
-        public function __construct(\DateTime $usrDate, string $city, string $keyMeteo)
+        public function __construct(string $city, string $keyMeteo)
         {
 
                 $url = "http://api.openweathermap.org/data/2.5/weather?q=" . $city . "&lang=fr&units=metric&appid=" . $keyMeteo;
-                $contents = file_get_contents($url);
+                $contents = @file_get_contents($url);
 
+                if (empty($contents)) {
+                        $url = "http://api.openweathermap.org/data/2.5/weather?q=Paris&lang=fr&units=metric&appid=" . $keyMeteo;
+                        $contents = @file_get_contents($url);
+                }
                 $jsonMeteo = json_decode($contents, TRUE);
-                
-                $url = "http://api.openweathermap.org/data/2.5/air_pollution?lat=" . $jsonMeteo['coord']['lat'] . "&lon=" . $jsonMeteo['coord']['lat'] . "&appid=" . $keyMeteo;
-                $contents2 = file_get_contents($url);
-                $jsonAir = json_decode($contents2, TRUE);
 
-                $this->tabApi = ["Meteo" => $jsonMeteo, "Air" => $jsonAir];
+                $url = "http://api.openweathermap.org/data/2.5/air_pollution?lat=" . $jsonMeteo['coord']['lat'] . "&lon=" . $jsonMeteo['coord']['lat'] . "&appid=" . $keyMeteo;
+                $contents2 = @file_get_contents($url);
+
+                $this->tabApi = array_merge($this->tabApi, ["Meteo" => $jsonMeteo], ["Air" => json_decode($contents2, TRUE)]);
+        
+                
         }
 
         public function getMeteo () {

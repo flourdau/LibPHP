@@ -7,35 +7,43 @@ namespace App\Lib;
 
 class Validator
 {
-        public function checkDateTime(string $strDate): ?\DateTime
+
+        public function checkStrDate(string $strDate): string
         {
-                if (preg_match("/^(\d{2})-(\d{2})-(\d{4})$/", $strDate)) { //Date
-                        if ($usrDate = \DateTime::createFromFormat('d-m-Y', $strDate)) {
-                                return $usrDate;
+
+                if (preg_match("/^(?'year'\d{4})-(?'month'\d{2})-(?'day'\d{2})$/", $strDate, $tmp)) { //Date US
+                        if (checkdate($tmp['month'], $tmp['day'], $tmp['year'])) {
+                                return $tmp['day'] . "-" . $tmp['month'] . "-" . $tmp['year'];
                         }
                 }
-                else if (preg_match("/^(\d{2})-(\d{2})-(\d{4}) (\d{2}):(\d{2})$/", $strDate)) {//Date+Time
-                        if ($usrDate = \DateTime::createFromFormat('d-m-Y H:i', $strDate)) {
-                                return $usrDate;
+                throw new \Exception('Bad Date Format... 0000-00-00');
+        }
+
+        public function checkStrTime(string $strTime): string
+        {
+                if (preg_match("/^(?'hour'\d{2}):(?'minute'\d{2})$/", $strTime, $tmp)) {
+                        $hour   = settype($hour, 'int');
+                        $minute = settype($minute, 'int');
+                        if ($hour >= 0 && $hour <= 24 && $minute >= 0 && $minute <= 60) {
+                                return $strTime;
                         }
                 }
-                else {
-                        throw new \Exception('Bad DateTime Format... 00-00-0000 00:00');
-                }
+                throw new \Exception('Bad Time Format... 00:00');
         }
 
         public function checkCity(string $city): string
         {
-                $city   = ucwords(trim($city));
+
+                $city   = strtolower(trim(htmlspecialchars($city)));
                 $len    = strlen($city);
-                
-                if (empty($city) || !ctype_alpha($city)) {
-                        return 'Paris';
+
+                if (empty($city) || 
+                $len <= 3 || $len >= 20 
+                || !preg_match("/^[a-z0-9%_\séèêàïîçôû-]+$/", $city)) {
+                        throw new \Exception('Bad City Format...');
                 }
-                else if ($len <= 3 || $len >= 20) {
-                        return 'Paris';
-                }
-                return $city;
+
+                return ucwords($city);
         }
 
         public function validateUsername(?string $username): string
