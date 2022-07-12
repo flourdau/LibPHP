@@ -46,6 +46,26 @@ class Validator
                 return ucwords($city);
         }
 
+        public function checkStrUsername(string $username)
+        {
+
+                if (empty($username)) {
+                        throw new \Exception('The username can not be empty.');
+                }
+
+
+                if (empty($username)) {
+                        throw new \Exception('The username can not be empty.');
+                }
+
+                if (1 !== preg_match('/^[a-z_]+$/', $username)) {
+                        throw new \Exception('The username must contain only lowercase latin characters and underscores.');
+                }
+
+                return $username;
+        }
+
+/*        
         public function validateUsername(?string $username): string
         {
                 if (empty($username)) {
@@ -93,5 +113,6 @@ class Validator
 
                 return $fullName;
         }
+*/
 
 }

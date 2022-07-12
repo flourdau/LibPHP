@@ -4,12 +4,9 @@
 */
 namespace App\Lib;
 
-setlocale(LC_ALL, "fr_FR");
-date_default_timezone_set('Europe/Paris');
-
 class Meteo
 {
-        private $tabApi       = [];
+        private $tabApi = [];
 
         public function __construct(string $city, string $keyMeteo)
         {
@@ -17,18 +14,18 @@ class Meteo
                 $url = "http://api.openweathermap.org/data/2.5/weather?q=" . $city . "&lang=fr&units=metric&appid=" . $keyMeteo;
                 $contents = @file_get_contents($url);
 
+                /* Si echec on relance avec Paris comme emplacement... */
                 if (empty($contents)) {
                         $url = "http://api.openweathermap.org/data/2.5/weather?q=Paris&lang=fr&units=metric&appid=" . $keyMeteo;
                         $contents = @file_get_contents($url);
                 }
                 $jsonMeteo = json_decode($contents, TRUE);
 
-                $url = "http://api.openweathermap.org/data/2.5/air_pollution?lat=" . $jsonMeteo['coord']['lat'] . "&lon=" . $jsonMeteo['coord']['lat'] . "&appid=" . $keyMeteo;
+                $url = "http://api.openweathermap.org/data/2.5/air_pollution?lat=" . $jsonMeteo['coord']['lat'] . "&lon=" . $jsonMeteo['coord']['lon'] . "&appid=" . $keyMeteo;
                 $contents2 = @file_get_contents($url);
 
                 $this->tabApi = array_merge($this->tabApi, ["Meteo" => $jsonMeteo], ["Air" => json_decode($contents2, TRUE)]);
-        
-                
+
         }
 
         public function getMeteo () {
