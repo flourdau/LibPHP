@@ -71,7 +71,7 @@ class Debug
         echo Html::surround("pre", false, print_r($value, true));
     }
 
-    public static function printDebugDie($value)
+    public static function printDie($value)
     {
         echo Html::surround("pre", false, print_r($value, true));
         die;

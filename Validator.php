@@ -21,10 +21,12 @@ class Validator
 
         public function checkStrTime(string $strTime): string
         {
-                if (preg_match("/^(?'hour'\d{2}):(?'minute'\d{2})$/", $strTime, $tmp)) {
+                if (preg_match("/^(?'hour'\d{2}):(?'minute'\d{2}):(?'seconde'\d{2})$/", $strTime, $tmp)) {
                         $hour   = settype($hour, 'int');
                         $minute = settype($minute, 'int');
-                        if ($hour >= 0 && $hour <= 24 && $minute >= 0 && $minute <= 60) {
+                        $seconde = settype($seconde, 'int');
+
+                        if ($hour >= 0 && $hour <= 24 && $minute >= 0 && $minute <= 60 && $seconde >= 0 && $seconde <= 60) {
                                 return $strTime;
                         }
                 }
@@ -65,6 +67,27 @@ class Validator
                 return $username;
         }
 
+        public function cleanArrayMeteo(array $meteo)
+        {
+                $newMeteo                       = [
+                                                        'Meteo'      => [],
+                                                        'Air'      => []
+                                                ];
+
+                $newMeteo['Meteo']['coord']     = $meteo['Meteo']['coord'];
+                $newMeteo['Meteo']['weather']   = array_merge(
+                                                                $meteo['Meteo']['weather'][0],
+                                                                $meteo['Meteo']['main']);
+                $newMeteo['Meteo']['wind']      = $meteo['Meteo']['wind'];
+                $newMeteo['Meteo']['sys']       = array_merge(
+                                                                $meteo['Meteo']['sys'],
+                                                                ['name' => $meteo['Meteo']['name']]);
+
+                $newMeteo['Air']['list']        = array_merge(
+                                                                $meteo['Air']['list'][0]['main'],
+                                                                $meteo['Air']['list'][0]['components']);
+                return $newMeteo;
+        }
 /*        
         public function validateUsername(?string $username): string
         {
