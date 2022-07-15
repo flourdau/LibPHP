@@ -1,73 +1,72 @@
 <?php
-
 namespace App\Lib;
 
 // use Symfony\Component\Console\Exception\InvalidArgumentException;
-// use function Symfony\Component\String\u;
+// use Symfony\Component\String\u;
 
 class Validator
 {
 
-        public function checkStrDate(string $strDate): string
+        public function checkStrDate(string $strDate)
         {
 
-                if (preg_match("/^(?'year'\d{4})-(?'month'\d{2})-(?'day'\d{2})$/", $strDate, $tmp)) { //Date US
+                if (preg_match("/^(?'year'\d{4})-(?'month'\d{2})-(?'day'\d{2})$/", $strDate, $tmp)) {
                         if (checkdate($tmp['month'], $tmp['day'], $tmp['year'])) {
-                                return $tmp['day'] . "-" . $tmp['month'] . "-" . $tmp['year'];
-                        }
+                                return (new \DateTime($tmp['day'] . "-" . $tmp['month'] . "-" . $tmp['year'], new \DateTimeZone("Europe/Paris")))->format('d-m-Y');
+                         }
                 }
-                throw new \Exception('Bad Date Format... 0000-00-00');
-        }
+                return (new \DateTime("now", new \DateTimeZone("Europe/Paris")))->format('d-m-Y');
 
-        public function checkStrTime(string $strTime): string
+        }
+        
+        public function checkStrTime(string $strTime)
         {
+
                 if (preg_match("/^(?'hour'\d{2}):(?'minute'\d{2}):(?'seconde'\d{2})$/", $strTime, $tmp)) {
-                        $hour   = settype($hour, 'int');
-                        $minute = settype($minute, 'int');
-                        $seconde = settype($seconde, 'int');
+                        $hour           = settype($hour, 'int');
+                        $minute         = settype($minute, 'int');
+                        $seconde        = settype($seconde, 'int');
 
                         if ($hour >= 0 && $hour <= 24 && $minute >= 0 && $minute <= 60 && $seconde >= 0 && $seconde <= 60) {
-                                return $strTime;
+                                return (new \DateTime($strTime, new \DateTimeZone("Europe/Paris")))->format('H:i:s');
                         }
                 }
-                throw new \Exception('Bad Time Format... 00:00');
+
+                return (new \DateTime("now", new \DateTimeZone("Europe/Paris")))->format('H:i:s');
+
         }
 
-        public function checkCity(string $city): string
-        {
+        public function checkMyCity($strCity): string {
 
-                $city   = strtolower(trim(htmlspecialchars($city)));
-                $len    = strlen($city);
-
-                if (empty($city) || 
-                $len <= 3 || $len >= 20 
-                || !preg_match("/^[a-z0-9%_\séèêàïîçôû-]+$/", $city)) {
-                        throw new \Exception('Bad City Format...');
+                $strCity = strtolower(trim(htmlspecialchars($strCity)));
+                $len = strlen($strCity);
+                if (empty($strCity) || $len <= 3 || $len >= 20 || !preg_match("/^[a-z0-9%_\séèêàïîçôû-]+$/", $strCity)) {
+                        return ('Paris');
                 }
-
-                return ucwords($city);
+                return $strCity;
         }
 
-        public function checkStrUsername(string $username)
+        public function checkStrUsername(string $username): string
         {
 
                 if (empty($username)) {
-                        throw new \Exception('The username can not be empty.');
+                        return ('The username can not be empty.');
                 }
 
-
-                if (empty($username)) {
-                        throw new \Exception('The username can not be empty.');
+                $len = strlen($username);
+                if ($len < 0 && $len > 30) {
+                        return ('The len username can not be good.');
                 }
 
-                if (1 !== preg_match('/^[a-z_]+$/', $username)) {
-                        throw new \Exception('The username must contain only lowercase latin characters and underscores.');
+                if (1 !== preg_match('/^[a-zA-Z0-9_]+$/', $username)) {
+                        return ('The username must contain only lowercase latin characters and underscores.');
                 }
 
                 return $username;
+
         }
 
-        public function cleanArrayMeteo(array $meteo)
+        public function cleanArrayMeteo(array $meteo): array
         {
                 $newMeteo                       = [
                                                         'Meteo'      => [],
