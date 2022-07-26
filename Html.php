@@ -1,7 +1,4 @@
 <?php
-/*
-* HTML Management
-*/
 namespace App\Lib;
 
 class Html
@@ -18,12 +15,12 @@ class Html
     {
         if ($tag && $html) {
             return "<{$tag}{$parram}>{$html}</{$tag}>\n";
-        } elseif ($html) {
+        }
+        elseif ($html) {
             return $html;
         }
         return null;
     }
-
 
     public static function input($params, $b_end = null)
     {

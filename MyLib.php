@@ -1,19 +1,16 @@
 <?php
-/*
-* MyLib Functions
-*/
 namespace App\Lib;
 
 class MyLib
 {
-
     public static function confirm($str = "Voulez-vous continuez?")
     {
         while (True) {
             $input = readline($str . " - (O)ui/(N)on - (Yes)/(N)o : ");
             if ($input === 'o' || $input === 'y') {
                 return True;
-            } elseif ($input === 'n') {
+            }
+            elseif ($input === 'n') {
                 return False;
             }
         }
@@ -31,8 +28,7 @@ class MyLib
 
     public static function strRandom($len = 16)
     {
-        $str = str_repeat("QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm0123456789");
-        return substr(str_shuffle($str, $len), 0, $len);
+        return substr(str_shuffle(str_repeat("QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm0123456789"), $len), 0, $len);
     }
 
     public static function strClean($str = null)
@@ -67,27 +63,27 @@ class MyLib
             $start = array_sum(explode(' ', microtime()));
             $timer = true;
             return null;
-        } else {
-            $timer = false;
-            $end = array_sum(explode(' ', microtime()));
+        }
+        else {
+            $timer  = false;
+            $end    = array_sum(explode(' ', microtime()));
             return round(($end - $start) * 1000, 3);
         }
     }
 
     public static function getIp()
     {
-        $request = 'http://bot.whatismyipaddress.com/';
-        $response  = file_get_contents($request);
+        $request    = 'http://bot.whatismyipaddress.com/';
+        $response   = file_get_contents($request);
         return "LAN : " . gethostbyname(gethostname()) . " WAN : " . $response;
     }
 
     public static function loopTxt2ASCII(string $T = "HelloWorld", int $L = 4, int $H = 5) : ?string
     {
-        $tmp = [];
-        
-        $alpha = " -_!.ABCDEFGHIJKLMNOPQRSTUVWXYZ?";
-        $ROW = "";
-        $tmp = str_split(trim($T));
+        $tmp    = [];
+        $alpha  = " -_!.ABCDEFGHIJKLMNOPQRSTUVWXYZ?";
+        $ROW    = "";
+        $tmp    = str_split(trim($T));
         $handle = @fopen(__DIR__ . "/ascii.txt", "r");
         if ($handle) {
             while ($buffer = stream_get_line($handle, 256 + 1, "\n")) {
@@ -109,5 +105,4 @@ class MyLib
         }
         return null;
     }
-
 }

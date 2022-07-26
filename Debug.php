@@ -1,12 +1,8 @@
 <?php
-/*
-* Debug Functions
-*/
 namespace App\Lib;
 
 class Debug
 {
-
     /*
     * Debug::printDebug(new Debug);
     * die;
@@ -31,7 +27,8 @@ class Debug
 
         if ($inipath) {
             return "Loaded php.ini = $inipath";
-        } else {
+        }
+        else {
             return 'A php.ini file is not loaded';
         }
     }
@@ -41,7 +38,8 @@ class Debug
         if (!isset($_SESSION)) {
             $_SESSION = [0 => 'No Session Party!'];
         }
-        $this->tab = [  'init'          => $this->initPHP(),
+        $this->tab = [
+                        'init'          => $this->initPHP(),
                         'dir'           => __DIR__,
                         'file'          => __FILE__,
                         'namespace'     => __NAMESPACE__,
@@ -58,7 +56,8 @@ class Debug
                         'IntMax'        => PHP_INT_MAX,
                         'cookie'        => $_COOKIE,
                         'classes'       => get_declared_classes(),
-                        'server'        => $_SERVER];
+                        'server'        => $_SERVER
+                    ];
     }
 
     public static function debug($value)
@@ -66,12 +65,12 @@ class Debug
         return Html::surround("pre", false, print_r($value, true));
     }
 
-    public static function printDebug($value)
+    public static function d($value)
     {
         echo Html::surround("pre", false, print_r($value, true));
     }
 
-    public static function printDie($value)
+    public static function dd($value)
     {
         echo Html::surround("pre", false, print_r($value, true));
         die;
