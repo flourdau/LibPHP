@@ -3,7 +3,7 @@ namespace App\Lib;
 
 use App\Lib\Debug;
 
-define("DICOS_PATH", "../depotsGIT/dicosJSON/calendar.json");
+define("DICOS_PATH", "../depotsGIT/Collections/calendar.json");
 
 class Calendar
 {
