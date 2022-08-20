@@ -55,6 +55,7 @@ class Calendar
         $tabCalendar = array_merge($tabCalendar, 
         [
             "Timestamp"         => $usrDate->getTimestamp(),
+            "Atom"             => $usrDate->format(DATE_ATOM),
             "Hour"              => $usrDate->format('H:i:s'),
             "Day"               => [
                                         "FirstName" => $calendar->Prenoms->$month->$day,
@@ -80,6 +81,8 @@ class Calendar
         // if ($usrDate->getTimestamp() > 0) {
         //         array_push($tabCalendar, ["Pâques" => date("d-m-Y", easter_date($usrDate->format("Y")))]);
         // }
+
+// Debug::dd($tabCalendar);
         $this->myTabCalendar = $tabCalendar;
     }
 

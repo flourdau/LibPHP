@@ -74,9 +74,11 @@ class Validator
                                                 $meteo['Meteo']['sys'],
                                                 ['name' => $meteo['Meteo']['name']]);
 
-        $newMeteo['Air']['list']        = array_merge(
-                                                $meteo['Air']['list'][0]['main'],
-                                                $meteo['Air']['list'][0]['components']);
+        if (!empty($newMeteo['Air']['list'])) {
+            $newMeteo['Air']['list']        = array_merge(
+                                                    $meteo['Air']['list'][0]['main'],
+                                                    $meteo['Air']['list'][0]['components']);
+        }
         return $newMeteo;
     }
 /*        
