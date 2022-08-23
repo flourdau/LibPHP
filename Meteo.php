@@ -17,7 +17,6 @@ class Meteo
         $jsonMeteo  = json_decode($contents, TRUE);
         $url        = "http://api.openweathermap.org/data/2.5/air_pollution?lat=" . $jsonMeteo['coord']['lat'] . "&lon=" . $jsonMeteo['coord']['lon'] . "&appid=" . $keyMeteo;
         $contents2  = @file_get_contents($url);
-        // Debug::dd($this->tabApi);
         $this->tabApi = array_merge($this->tabApi, ["Meteo" => $jsonMeteo], ["Air"  => json_decode($contents2, TRUE)]);
     }
 
