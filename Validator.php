@@ -30,7 +30,8 @@ class Validator
         return (new \DateTime("now", new \DateTimeZone("Europe/Paris")))->format('H:i:s');
     }
 
-    public function checkMyCity($strCity): string {
+    public function checkMyCity($strCity): string
+    {
         $strCity    = strtolower(trim(htmlspecialchars($strCity)));
         $len        = strlen($strCity);
 
@@ -46,10 +47,10 @@ class Validator
             return ('The username can not be empty.');
         }
         $len = strlen($username);
-        if ($len < 0 && $len > 30) {
+        if ($len < 0 || $len > 30) {
             return ('The len username can not be good.');
         }
-        if (1 !== preg_match('/^[a-zA-Z0-9_]+$/', $username)) {
+        if (1 !== preg_match('/^[a-zA-Z0-9_ ]+$/', $username)) {
             return ('The username must contain only lowercase latin characters and underscores.');
         }
         return $username;
