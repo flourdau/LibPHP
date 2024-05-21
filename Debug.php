@@ -4,8 +4,7 @@ namespace App\Lib;
 class Debug
 {
     /*
-    * Debug::printDebug(new Debug);
-    * die;
+    * Debug::dd(new Debug);
     */
     private $tab = [];
 
