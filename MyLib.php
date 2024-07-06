@@ -78,7 +78,7 @@ class MyLib
         return "LAN : " . gethostbyname(gethostname()) . " WAN : " . $response;
     }
 
-    public static function loopTxt2ASCII(string $T = "HelloWorld", int $L = 4, int $H = 5) : ?string
+    public static function loopTxt2ASCII(string $T = "HelloWorld", int $L = 4, int $H = 5, string $char = '@') : ?string
     {
         $tmp    = [];
         $alpha  = " -_!.ABCDEFGHIJKLMNOPQRSTUVWXYZ?";
@@ -101,6 +101,7 @@ class MyLib
                 die;
             }
             fclose($handle);
+            $ROW = str_replace('#', $char, $ROW);
             return $ROW;
         }
         return null;
