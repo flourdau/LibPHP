@@ -1,9 +1,8 @@
 <?php
 namespace App\Lib;
-
 use App\Lib\Debug;
 
-define("DICOS_PATH", "../../depotsGIT/Collections/calendar.json");
+define("DICOS_PATH", __DIR__ . "/../../depotsGIT/Collections/calendar.json");
 
 class Calendar
 {

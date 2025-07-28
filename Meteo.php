@@ -9,6 +9,7 @@ class Meteo
     {
         $url        = "http://api.openweathermap.org/data/2.5/weather?q=" . $city . "&lang=fr&units=metric&appid=" . $keyMeteo;
         $contents   = @file_get_contents($url);
+
         /* Si echec on relance avec Paris comme emplacement... */
         if (empty($contents)) {
             $url    = "http://api.openweathermap.org/data/2.5/weather?q=Paris&lang=fr&units=metric&appid=" . $keyMeteo;

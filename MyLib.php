@@ -94,7 +94,7 @@ class MyLib
                     }
                     $ROW .= mb_substr($buffer, ($position * $L), $L);
                 }
-                $ROW = $ROW . "\n";
+                $ROW = $ROW . "</br>";
             }
             if (!feof($handle)) {
                 echo "Erreur: fopen() a échoué\n";
