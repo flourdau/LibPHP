@@ -6,7 +6,12 @@ class Validator
     public function checkStrDate(string $strDate)
     {
         if (preg_match("/^(?'year'\d{4})-(?'month'\d{2})-(?'day'\d{2})$/", $strDate, $tmp)) {
-            if (checkdate($tmp['month'], $tmp['day'], $tmp['year'])) {
+            if (checkdate((int) $tmp['month'], (int) $tmp['day'], (int) $tmp['year'])) {
+                return (new \DateTime($tmp['day'] . "-" . $tmp['month'] . "-" . $tmp['year'], new \DateTimeZone("Europe/Paris")))->format('d-m-Y');
+            }
+        }
+        if (preg_match("/^(?'day'\d{2})-(?'month'\d{2})-(?'year'\d{4})$/", $strDate, $tmp)) {
+            if (checkdate((int) $tmp['month'], (int) $tmp['day'], (int) $tmp['year'])) {
                 return (new \DateTime($tmp['day'] . "-" . $tmp['month'] . "-" . $tmp['year'], new \DateTimeZone("Europe/Paris")))->format('d-m-Y');
             }
         }
@@ -16,9 +21,9 @@ class Validator
     public function checkStrTime(string $strTime)
     {
         if (preg_match("/^(?'hour'\d{2}):(?'minute'\d{2}):(?'seconde'\d{2})$/", $strTime, $tmp)) {
-            $hour       = settype($hour, 'int');
-            $minute     = settype($minute, 'int');
-            $seconde    = settype($seconde, 'int');
+            $hour       = (int) $tmp['hour'];
+            $minute     = (int) $tmp['minute'];
+            $seconde    = (int) $tmp['seconde'];
 
             if ($hour >= 0 && $hour <= 24 && $minute >= 0 && $minute <= 60 && $seconde >= 0 && $seconde <= 60) {
                 return (new \DateTime($strTime, new \DateTimeZone("Europe/Paris")))->format('H:i:s');

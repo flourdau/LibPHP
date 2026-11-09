@@ -21,8 +21,8 @@ class Solar
 {
     public static function solar($usrDate, $lat, $lon) {
         
-        $ma_latitude = 50.62925;
-        $ma_longitude = 3.057256;
+        $ma_latitude = is_numeric($lat) ? (float) $lat : 50.62925;
+        $ma_longitude = is_numeric($lon) ? (float) $lon : 3.057256;
 
         $time_zone = substr($usrDate->format('O'), -4, 4);
         $time_zone = $time_zone / 100;
@@ -35,7 +35,7 @@ class Solar
         
         $Time_past_local_midnight = $heure_secondes / 86400;
         
-        $Julian_Day = gregoriantojd(03, 22, 2021);
+        $Julian_Day = gregoriantojd((int) $usrDate->format('m'), (int) $usrDate->format('d'), (int) $usrDate->format('Y'));
         $Julian_Century= $Julian_Day - 2451545;
         $Julian_Century /= 36525;
         
@@ -180,20 +180,20 @@ class Solar
         $Solar_Noon_LST_1 = 4 * $ma_longitude;
         $Solar_Noon_LST = 720 - $Solar_Noon_LST_1 - $Eq_of_Time_minutes + $Solar_Noon_LST;
         $Solar_Noon_Hours = floor($Solar_Noon_LST / 60);
-        $Solar_Noon_Minutes = $Solar_Noon_LST % 60;
+        $Solar_Noon_Minutes = fmod($Solar_Noon_LST, 60);
         $Solar_Noon_LST = $Solar_Noon_LST / 1440;
         
         $Sunrise_Time_LST = $HA_Sunrise_deg * 4;
         $Sunrise_Time_LST = $Sunrise_Time_LST / 1440;
         $Sunrise_Time_LST = $Solar_Noon_LST - $Sunrise_Time_LST;
         $Sunrise_Time_Hours = floor($Sunrise_Time_LST * 1440 / 60);
-        $Sunrise_Time_Minutes = ($Sunrise_Time_LST * 1440) % 60;
+        $Sunrise_Time_Minutes = fmod($Sunrise_Time_LST * 1440, 60);
         
         $Sunset_Time_LST = $HA_Sunrise_deg * 4;
         $Sunset_Time_LST = $Sunset_Time_LST / 1440;
         $Sunset_Time_LST = $Solar_Noon_LST + $Sunset_Time_LST;
         $Sunset_Time_Hours = floor($Sunset_Time_LST * 1440 / 60);
-        $Sunset_Time_Minutes = ($Sunset_Time_LST * 1440) % 60;
+        $Sunset_Time_Minutes = fmod($Sunset_Time_LST * 1440, 60);
         
         $Sunlight_Duration_minutes = 8 * $HA_Sunrise_deg;
         
@@ -203,7 +203,7 @@ class Solar
         $True_Solar_Time_min = $True_Solar_Time_min_3 + $Eq_of_Time_minutes + $True_Solar_Time_min_2 - $True_Solar_Time_min_1;
         $True_Solar_Time_min = fmod($True_Solar_Time_min, 1440);
         $True_Solar_Time_Hours = floor($True_Solar_Time_min / 60);
-        $True_Solar_Time_Minutes = $True_Solar_Time_min % 60;
+        $True_Solar_Time_Minutes = fmod($True_Solar_Time_min, 60);
         
         if ($True_Solar_Time_min/4 < 0) {
             $Hour_Angle_deg = $True_Solar_Time_min / 4;

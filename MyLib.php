@@ -84,7 +84,10 @@ class MyLib
         $alpha  = " -_!.ABCDEFGHIJKLMNOPQRSTUVWXYZ?";
         $ROW    = "";
         $tmp    = str_split(trim($T));
-        $handle = @fopen(__DIR__ . "/../../depotsGIT/Collections/ascii.txt", "r");
+        $asciiPath = file_exists(__DIR__ . "/../Collections/ascii.txt")
+            ? __DIR__ . "/../Collections/ascii.txt"
+            : __DIR__ . "/../../depotsGIT/Collections/ascii.txt";
+        $handle = @fopen($asciiPath, "r");
         if ($handle) {
             while ($buffer = stream_get_line($handle, 256 + 1, "\n")) {
                 foreach ($tmp as $c) {

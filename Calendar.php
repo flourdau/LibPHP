@@ -1,91 +1,106 @@
 <?php
 namespace App\Lib;
-use App\Lib\Debug;
 
-define("DICOS_PATH", __DIR__ . "/../../depotsGIT/Collections/calendar.json");
+define("DICOS_PATH", file_exists(__DIR__ . "/../Collections/calendar.json")
+    ? __DIR__ . "/../Collections/calendar.json"
+    : __DIR__ . "/../../depotsGIT/Collections/calendar.json");
 
 class Calendar
 {
-    private $myTabCalendar = [];
+    private array $myTabCalendar = [];
+
+    private static function formatFr(\DateTimeInterface $date, string $pattern): string
+    {
+        if (class_exists(\IntlDateFormatter::class)) {
+            $fmt = new \IntlDateFormatter('fr_FR', \IntlDateFormatter::FULL, \IntlDateFormatter::FULL, 'Europe/Paris', null, $pattern);
+            $res = $fmt->format($date);
+            if ($res !== false) {
+                return ucwords($res);
+            }
+        }
+        return $date->format('Y-m-d');
+    }
 
     public function __construct(\DateTime $usrDate)
     {
-        $nowDate        = new \DateTime();
-        $tabCalendar    = [];
-        $cntDaySaint    = intval($usrDate->format("z"));
+        $nowDate     = new \DateTime();
+        $tabCalendar = [];
+        $usrYear     = (int) $usrDate->format("Y");
+        $nowYear     = (int) $nowDate->format("Y");
+        $calendar    = json_decode((string) file_get_contents(DICOS_PATH), true);
 
-        if (!$usrDate->format("L") && $cntDaySaint > 60) {
-            $cntDaySaint++;
-        }
-        $usrYear = $usrDate->format("Y");
-        settype($usrYear, "int");
-        $nowYear = $nowDate->format("Y");
-        settype($nowYear, "int");
-        $calendar = json_decode(file_get_contents(DICOS_PATH), false);
+        $md    = $usrDate->format("m-d");
+        $month = $usrDate->format("m");
+        $day   = $usrDate->format("d");
 
-        //      Check Saisons
-        foreach ($calendar->Saisons as $name => $tab) {
-                $tmp1 = \DateTime::createFromFormat('m-d', $tab[0], new \DateTimeZone("Europe/Paris"));
-                $tmp2 = \DateTime::createFromFormat('m-d', $tab[1], new \DateTimeZone("Europe/Paris"));
-
-                if ($usrDate->format("m-d") >= $tmp1->format("m-d") && $usrDate->format('m-d') <= $tmp2->format("m-d")) {
-                    if ($name === "Hiver2") {
-                        $name = "Hiver";
+        // Check Saisons
+        if (isset($calendar['saisons']) && is_array($calendar['saisons'])) {
+            foreach ($calendar['saisons'] as $season) {
+                $matched = false;
+                if (isset($season['dates']) && is_array($season['dates'])) {
+                    foreach ($season['dates'] as $range) {
+                        if (is_array($range) && count($range) === 2 && $md >= $range[0] && $md <= $range[1]) {
+                            $matched = true;
+                            break;
+                        }
                     }
-                    if ($name === "Hiver") {
-                        $calendar->Saisons->$name[0] = "12-21";
-                        $calendar->Saisons->$name[1] = "03-20";
-                    }
-                    $tabCalendar = array_merge($tabCalendar, ['Saison' => [$name => $calendar->Saisons->$name]]);
                 }
+                if (!$matched && isset($season['start'], $season['end']) && $md >= $season['start'] && $md <= $season['end']) {
+                    $matched = true;
+                }
+                if ($matched) {
+                    $label = $season['label'] ?? 'Inconnue';
+                    $tabCalendar['Saison'] = [
+                        $label => [$season['start'] ?? '12-21', $season['end'] ?? '03-20']
+                    ];
+                    break;
+                }
+            }
         }
 
-        //      Check Fetes
-        $tabCalendar['Fetes'] = ["Aucune"];
-        foreach ($calendar->Fetes as $date => $tab) {
-                if ($date == $usrDate->format('m-d')) {
-                    $tabCalendar = array_merge($tabCalendar, ['Fetes' => $tab]);
-                }
-        }
+        // Check Fetes
+        $fete = $calendar['fetes'][$md] ?? null;
+        $tabCalendar['Fetes'] = $fete ? (is_array($fete) ? $fete : [$fete]) : ["Aucune"];
 
-        $month  = $usrDate->format('m');
-        $day    = $usrDate->format('d');
+        // Ephemeride (Prenoms & Saints)
+        $dayInfo   = $calendar['ephemeride'][$month][$day] ?? [];
+        $prenoms   = $dayInfo['prenom'] ?? [];
+        $saints    = $dayInfo['saint'] ?? [];
+        $dictons   = $calendar['dictons'] ?? [];
+        $monthIdx  = (int) $usrDate->format("n") - 1;
 
-        $tabCalendar = array_merge($tabCalendar, 
-        [
-            "Timestamp"         => $usrDate->getTimestamp(),
-            "Atom"             => $usrDate->format(DATE_ATOM),
-            "Hour"              => $usrDate->format('H:i:s'),
-            "Day"               => [
-                                        "FirstName" => $calendar->Prenoms->$month->$day,
-                                        "Saint"     => $calendar->Saints[$cntDaySaint],
-                                        "dayMonth"  => $day,
-                                        "dayYear"   => $usrDate->format("z"),
-                                        "nameFr"    => ucwords(strftime("%A",$usrDate->getTimestamp())),
-                                        "Name"      => $usrDate->format("l")
-                                    ],
-            "Month"             => [
-                                        "monthYear" => $month,
-                                        "nameFr"    => ucwords(strftime("%B", $usrDate->getTimestamp())),
-                                        "Name"      => $usrDate->format("F")
-                                    ],
-            "Year"              => $usrDate->format('Y'),
-            "Bissextile" 		=> $usrDate->format("L"),
-            "Age"               => ($nowYear - $usrYear),
-            "Semaine"           => $usrDate->format("W"),
-            "Fuseau Horaire"    => $usrDate->format("e"),
-            "Dicton"        	=> $calendar->Dictons[$usrDate->format("n") - 1]
-        ]);
+        $tabCalendar = array_merge(
+            $tabCalendar,
+            [
+                "Timestamp"      => $usrDate->getTimestamp(),
+                "Atom"           => $usrDate->format(DATE_ATOM),
+                "Hour"           => $usrDate->format('H:i:s'),
+                "Day"            => [
+                    "FirstName" => $prenoms,
+                    "Saint"     => $saints,
+                    "dayMonth"  => $day,
+                    "dayYear"   => $usrDate->format("z"),
+                    "nameFr"    => self::formatFr($usrDate, 'EEEE'),
+                    "Name"      => $usrDate->format("l"),
+                ],
+                "Month"          => [
+                    "monthYear" => $month,
+                    "nameFr"    => self::formatFr($usrDate, 'MMMM'),
+                    "Name"      => $usrDate->format("F"),
+                ],
+                "Year"           => $usrDate->format('Y'),
+                "Bissextile"     => $usrDate->format("L"),
+                "Age"            => ($nowYear - $usrYear),
+                "Semaine"        => $usrDate->format("W"),
+                "Fuseau Horaire" => $usrDate->format("e"),
+                "Dicton"         => $dictons[$monthIdx] ?? null,
+            ]
+        );
 
-        // if ($usrDate->getTimestamp() > 0) {
-        //         array_push($tabCalendar, ["Pâques" => date("d-m-Y", easter_date($usrDate->format("Y")))]);
-        // }
-
-// Debug::dd($tabCalendar);
         $this->myTabCalendar = $tabCalendar;
     }
 
-    public function getCalendar()
+    public function getCalendar(): array
     {
         return $this->myTabCalendar;
     }
